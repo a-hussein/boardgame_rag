@@ -1,0 +1,24 @@
+# ENVIRONMENTS / CACHES
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+*.ipynb_checkpoints
+
+# LOCAL CONFIGS / SECRETS
+.env
+.DS_Store
+.vscode/
+
+# GENERATED ARTIFACTS
+data/raw/
+data/processed/
+eval/*.jsonl
+indices/
+models/
+*.log
+
+# KEEP uv.lock for reproducibility
+!uv.lock
