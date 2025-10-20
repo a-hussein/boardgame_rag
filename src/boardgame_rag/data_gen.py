@@ -1,4 +1,3 @@
-# src/boardgame_hybrid_qa/data_gen.py
 from __future__ import annotations
 import argparse, json, random, pathlib, csv
 from typing import List, Dict, Any, Optional
@@ -11,7 +10,7 @@ MECHANICS = [
 ]
 
 CATEGORIES = [
-    "Economic","Card Game","Eurogame","Ameritrash","Bluffing","Deduction",
+    "Economic","Card Game","Eurogame","Bluffing","Deduction",
     "Abstract","Family","Strategy","Party","Cooperative","Thematic"
 ]
 
@@ -34,9 +33,9 @@ def _rand_text(name:str, mechs:List[str], cats:List[str], weight:float, t:int)->
         bits.append("negotiation yields flexible exchanges and alliances")
     if "Dice Rolling" in mechs: 
         bits.append("variance can be mitigated via rerolls or conversions")
-    if not bits: 
+    if not bits: # generic sentence, in case no mechanics triggered
         bits.append("strategic choices compound into long-term advantages")
-        
+
     return (f"{name} blends {', '.join(mechs[:2])} within a {cats[0].lower()} frame. "
             f"Typical weight {weight:.1f}; play time around {t} minutes. " + " ".join(bits))
 
@@ -61,7 +60,8 @@ def synthesize(n:int)->List[Dict[str,Any]]:
         rows.append(_row(f"G{i:03d}", f"{name} {i%7 if i>0 else ''}".strip()))
     return rows
 
-def load_bgg_csv(path: pathlib.Path) -> List[Dict[str,Any]]:
+# optional (not yet implemented)
+def load_bgg_csv(path: pathlib.Path) -> List[Dict[str,Any]]: 
     rows = []
     with path.open(newline="", encoding="utf-8") as f:
         r = csv.DictReader(f)
@@ -124,3 +124,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+# future steps:
+    # global see
+    # pydnatic schema enforcer
