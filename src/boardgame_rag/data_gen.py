@@ -49,7 +49,7 @@ def _rand_text(name:str, mechs:List[str], cats:List[str], weight:float, t:int)->
             f"Typical weight {weight:.1f}; play time around {t} minutes. " + " ".join(bits))
 
 def _row(doc_id:str, name:str)->Dict[str,Any]:
-    rng = random.Random(doc_id) # its own rng sequence, seperate from the global level
+    rng = random.Random(doc_id) # its own rng sequence, seperate from the global level 
     year = rng.randint(1990, 2024)
     pmin, pmax = rng.choice([(2,4),(2,5),(3,4),(3,5),(4,6)])
     t = rng.choice([30,35,45,60,75,90])
@@ -63,6 +63,7 @@ def _row(doc_id:str, name:str)->Dict[str,Any]:
     )
 
 def synthesize(n:int)->List[Dict[str,Any]]:
+    random.seed(102025) #10/20/25
     rows = []
     for i in range(n):
         name = random.choice(NAMES)
