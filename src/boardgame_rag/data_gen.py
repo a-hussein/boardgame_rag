@@ -1,3 +1,12 @@
+"""
+This file generates data to use in our RAG pipeline.
+The data is synthetic, but RAG isn't about truth, it'ts about structure and relevance.
+At least, during the poc phase. We can swap out data later out.
+
+This file creates raw json "data/raw/corpus.jsonl" when running `make data`,
+    and is then parsed into a parquet file "data/processed/corpus.parquet"
+"""
+
 from __future__ import annotations
 import argparse, json, random, pathlib, csv
 from typing import List, Dict, Any, Optional
@@ -40,7 +49,7 @@ def _rand_text(name:str, mechs:List[str], cats:List[str], weight:float, t:int)->
             f"Typical weight {weight:.1f}; play time around {t} minutes. " + " ".join(bits))
 
 def _row(doc_id:str, name:str)->Dict[str,Any]:
-    rng = random.Random(doc_id)
+    rng = random.Random(doc_id) # its own rng sequence, seperate from the global level
     year = rng.randint(1990, 2024)
     pmin, pmax = rng.choice([(2,4),(2,5),(3,4),(3,5),(4,6)])
     t = rng.choice([30,35,45,60,75,90])
