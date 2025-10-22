@@ -2,21 +2,21 @@ from __future__ import annotations
 import argparse, pathlib, pickle
 import numpy as np
 import pandas as pd
-from rank_bm25 import BM25Okapi
-from sentence_transformers import SentenceTransformer
-import faiss
+from rank_bm25 import BM25Okapi # lexical ranking (read more here: https://pypi.org/project/rank-bm25/)
+from sentence_transformers import SentenceTransformer # embeddings (read more here: https://sbert.net/)
+import faiss # ANN
 
 def tokenize(text:str):
     return [t.lower() for t in text.split()]
 
-def build_bm25(texts):
+def build_bm25(texts): # used to t
     tokenized = [tokenize(t) for t in texts]
     return BM25Okapi(tokenized), tokenized
 
 def build_faiss(embs: np.ndarray):
-    faiss.normalize_L2(embs)
-    index = faiss.IndexFlatIP(embs.shape[1])
-    index.add(embs.astype(np.float32))
+    faiss.normalize_L2(embs) # make vectors unit vectors
+    index = faiss.IndexFlatIP(embs.shape[1]) # inner product between unit vecors is cosine similarity
+    index.add(embs.astype(np.float32)) 
     return index
 
 def main():
@@ -26,7 +26,8 @@ def main():
     ap.add_argument("--embedder", default="sentence-transformers/all-MiniLM-L6-v2")
     args = ap.parse_args()
 
-    out = pathlib.Path(args.out_dir); out.mkdir(parents=True, exist_ok=True)
+    out = pathlib.Path(args.out_dir)
+    out.mkdir(parents=True, exist_ok=True)
     df = pd.read_parquet(args.in_path)
     doc_ids = df["doc_id"].astype(str).tolist()
     fields = df["text"].astype(str).tolist()
