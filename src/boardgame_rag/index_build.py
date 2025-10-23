@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 from rank_bm25 import BM25Okapi # lexical ranking (read more here: https://pypi.org/project/rank-bm25/)
 from sentence_transformers import SentenceTransformer # embeddings (read more here: https://sbert.net/)
-import faiss # ANN
+import faiss # ANN (read more here: https://python.langchain.com/docs/integrations/vectorstores/faiss/)
 
 def tokenize(text:str):
     return [t.lower() for t in text.split()]
