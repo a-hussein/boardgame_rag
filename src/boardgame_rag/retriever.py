@@ -35,7 +35,7 @@ class HybridRetriever:
         bm_scores = self.bm25.get_scores(tokenize(query))
         top_bm_idx = np.argsort(bm_scores)[::-1][:kb]
         # FAISS
-        q = self.embed_model.encode([query])
+        q = self.embed_model.encode([query]) # embedding the input query
         faiss.normalize_L2(q)
         sims, idxs = self.faiss_index.search(q.astype(np.float32), kv)
         top_vec_idx = idxs[0]; vec_scores = sims[0]
@@ -75,3 +75,6 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+# uv run python -m boardgame_rag.retriever --indices indices --q "games like catan that arent catan"
