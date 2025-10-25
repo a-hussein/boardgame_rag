@@ -21,12 +21,13 @@ def main():
     ap.add_argument("--gold", required=False, default="eval/gold.jsonl")
     ap.add_argument("--indices", required=True)
     ap.add_argument("--report", required=False, default="eval/report.md")
+    ap.add_argument("--alpha", type=float, default=.5)
     ap.add_argument("--k", type=int, default=10)
     ap.add_argument("--demo", action="store_true")
     ap.add_argument("--q")
     args = ap.parse_args()
 
-    retr = HybridRetriever(args.indices)
+    retr = HybridRetriever(args.indices, args.alpha)
 
     if args.demo and args.q:
         hits = retr.search(args.q, k=args.k)
