@@ -2,6 +2,10 @@
 The HybridRetriever allows us to answer:
 Which board game docs are most relevant to this query?
 ...using both lexical and semantic matching together.
+
+fuses bm25 and daiss scores to make a ranked list
+
+retrieval quality depends on corpus diversity & α weighting
 """
 
 
