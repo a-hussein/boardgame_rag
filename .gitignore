@@ -15,7 +15,7 @@ __pycache__/
 # GENERATED ARTIFACTS
 data/raw/
 data/processed/
-eval/*.jsonl
+eval/
 indices/
 models/
 *.log

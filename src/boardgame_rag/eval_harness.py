@@ -31,7 +31,8 @@ def main():
 
     if args.demo and args.q:
         hits = retr.search(args.q, k=args.k)
-        for h in hits: print(h)
+        for h in hits: 
+            print(h)
         return
 
     gold_path = pathlib.Path(args.gold)
@@ -49,3 +50,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+# quick way to demo without needing `eval.gold.jsonl;` file: uv run python -m boardgame_rag.eval_harness --indices indices --demo --q "dice trading" --k 5
