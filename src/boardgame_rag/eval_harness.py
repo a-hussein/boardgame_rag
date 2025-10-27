@@ -29,7 +29,10 @@ def main():
 
     retr = HybridRetriever(args.indices, args.alpha)
 
-    if args.demo and args.q:
+    if args.demo:
+        if not args.q:
+            print("There was no query given! Please provide --q for demo mode. Or, conveniently enter query below: ")
+            args.q = input("Your Query: ")
         hits = retr.search(args.q, k=args.k)
         for h in hits: 
             print(h)
@@ -51,6 +54,7 @@ def main():
 if __name__ == "__main__":
     main()
 
-# quick way to demo without needing `eval.gold.jsonl` file, can use a demo: 
-    # uv run python -m boardgame_rag.eval_harness --indices indices --demo --q "dice trading" --k 5
-    # basically, this will run like retriever
+# make demo
+    # simple demo without using gold file, instead use query
+# make eval
+    # report
