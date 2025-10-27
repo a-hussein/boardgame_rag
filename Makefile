@@ -31,10 +31,12 @@ index:
 eval:
 	$(PYTHON) python -m boardgame_rag.eval_harness --gold eval/gold.jsonl --indices indices --report eval/report.md
 
-# 4) API
+# 4) Simple demo CLI
+demo:
+# 	@read -p "Enter your query: " q; 
+	$(PYTHON) python -m boardgame_rag.eval_harness --demo --indices indices
+
+# 5) API
 api:
 	$(PYTHON) uvicorn boardgame_rag.api:app --reload
 
-# 5) Simple demo CLI
-run:
-	$(PYTHON) python -m boardgame_rag.eval_harness --demo
