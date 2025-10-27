@@ -51,4 +51,6 @@ def main():
 if __name__ == "__main__":
     main()
 
-# quick way to demo without needing `eval.gold.jsonl;` file: uv run python -m boardgame_rag.eval_harness --indices indices --demo --q "dice trading" --k 5
+# quick way to demo without needing `eval.gold.jsonl` file, can use a demo: 
+    # uv run python -m boardgame_rag.eval_harness --indices indices --demo --q "dice trading" --k 5
+    # basically, this will run like retriever
