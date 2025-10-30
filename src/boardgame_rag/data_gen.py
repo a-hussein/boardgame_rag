@@ -65,10 +65,20 @@ def _row(doc_id:str, name:str)->Dict[str,Any]:
 def synthesize(n:int)->List[Dict[str,Any]]:
     random.seed(102025) #10/20/25
     rows = []
+
+    # enforce that no dup board game names
+    used_names = set()
     for i in range(n):
-        name = random.choice(NAMES)
-        rows.append(_row(f"G{i:03d}", f"{name} {i%7 if i>0 else ''}".strip()))
+        base = random.choice(NAMES)
+        # unique name per row
+        name = base if i < len(NAMES) else f"{base} {i}"
+        while name in used_names:
+            i += 1
+            name = f"{base} {i}"
+        used_names.add(name)
+        rows.append(_row(f"G{i:03d}", name))
     return rows
+
 
 # optional (not yet implemented)
 def load_bgg_csv(path: pathlib.Path) -> List[Dict[str,Any]]: 
@@ -101,6 +111,8 @@ def mk_processed(in_jsonl:pathlib.Path, out_parquet:pathlib.Path)->None:
     out_parquet.parent.mkdir(parents=True, exist_ok=True)
     recs = [json.loads(l) for l in in_jsonl.read_text(encoding="utf-8").splitlines() if l.strip()]
     df = pd.DataFrame(recs)
+    df = df.drop_duplicates(subset=["name"], keep="first")  # enforce unique names by dropping duplicates
+
     # simple normalization
     df["mechanics_flat"]  = df["mechanics"].apply(lambda xs: [x.lower() for x in xs])
     df["categories_flat"] = df["categories"].apply(lambda xs: [x.lower() for x in xs])
