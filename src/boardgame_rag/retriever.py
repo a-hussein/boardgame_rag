@@ -99,6 +99,21 @@ def main():
         print(h)
 
 if __name__ == "__main__":
+
+    """
+    only include the below when debugging
+    this allows you to not need to add args when debugging and/or runnning in cli
+    it should not be pushed to central repo with team
+    """
+    #####################################
+    # import sys, argparse
+
+    # if not sys.argv[1:]: # 👇 inject defaults only if user didn’t pass any args
+    #     sys.argv += ["--indices","indices","--q","deck building","--alpha","0.5"]
+    
+    #####################################
+
+
     main()
 
 
