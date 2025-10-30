@@ -16,6 +16,8 @@ from rank_bm25 import BM25Okapi
 from sentence_transformers import SentenceTransformer
 import faiss
 
+from .utils import log_query
+
 def tokenize(text:str):
     return [t.lower() for t in text.split()]
 
@@ -34,7 +36,11 @@ class HybridRetriever:
         self.embed_model = SentenceTransformer(meta["model"])
         self.alpha = alpha
 
-    def search(self, query: str, k: int = 10, kb: int = 50, kv: int = 50):
+    def search(self, query: str, k: int = 10, kb: int = 50, kv: int = 50,
+               max_play_time: int | None = None, # include for logging
+               players_at: int | None = None,
+               mechanics_any: list[str] | None = None
+               ):
         # BM25
         bm_scores = self.bm25.get_scores(tokenize(query))
         top_bm_idx = np.argsort(bm_scores)[::-1][:kb]
@@ -63,6 +69,21 @@ class HybridRetriever:
             i = int(cand_idx[o])
             results.append({"doc_id": self.doc_ids[i], "score": float(fused[o]),
                             "bm25": float(bm[cand_idx==i][0]), "vec": float(vec[cand_idx==i][0])})
+            
+        log_query("logs", {
+            "query": query,
+            "alpha": self.alpha,
+            "k": k,
+            "filters": {
+                "max_play_time": max_play_time,
+                "players_at": players_at,
+                "mechanics_any": mechanics_any,
+            },
+            "bm25_top": [self.doc_ids[int(i)] for i in top_bm_idx[:3]],
+            "faiss_top": [self.doc_ids[int(i)] for i in top_vec_idx[:3]],
+            "final": results,   # includes doc_id + fused
+        })
+
         return results
 
 def main():

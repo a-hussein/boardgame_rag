@@ -22,3 +22,6 @@ models/
 
 # KEEP uv.lock for reproducibility
 !uv.lock
+
+# logs
+/logs
