@@ -41,3 +41,19 @@ dev = [
     "pytest-cov>=5.0",
     "ruff>=0.6",
 ]
+
+[tool.mypy]
+python_version = "3.11"
+
+# Per-module ignores go in overrides (array of tables).
+[[tool.mypy.overrides]]
+module = ["faiss", "faiss.*", "rank_bm25", "rank_bm25.*", "sentence_transformers", "sentence_transformers.*"]
+ignore_missing_imports = true
+
+# If you don't want to install pandas-stubs yet, ignore pandas too:
+[[tool.mypy.overrides]]
+module = ["pandas", "pandas.*"]
+ignore_missing_imports = true
+
+
+
