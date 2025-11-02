@@ -33,7 +33,6 @@ eval:
 
 # 4) Simple demo CLI
 demo:
-# 	@read -p "Enter your query: " q; 
 	$(PYTHON) python -m boardgame_rag.eval_harness --demo --indices indices
 
 # 5) API

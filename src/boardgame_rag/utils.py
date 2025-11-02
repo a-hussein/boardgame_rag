@@ -1,4 +1,7 @@
-import json, time, pathlib
+import json
+import pathlib
+import time
+
 
 def log_query(trace_dir: str, payload: dict):
     d = pathlib.Path(trace_dir)

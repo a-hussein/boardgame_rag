@@ -1,8 +1,11 @@
 # bm25 test
-import pickle, pathlib, numpy as np
+import pathlib
+import pickle
+
+import numpy as np
 
 p = pathlib.Path("indices")
-obj = pickle.loads((p/"bm25.pkl").read_bytes())
+obj = pickle.loads((p / "bm25.pkl").read_bytes())
 bm25 = obj["bm25"]
 doc_ids = obj["doc_ids"]
 

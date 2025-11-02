@@ -10,45 +10,57 @@ retrieval quality depends on corpus diversity & α weighting
 
 
 from __future__ import annotations
-import argparse, pickle, pathlib
+
+import argparse
+import pathlib
+import pickle
+
+import faiss
 import numpy as np
 from rank_bm25 import BM25Okapi
 from sentence_transformers import SentenceTransformer
-import faiss
 
 from .utils import log_query
 
-def tokenize(text:str):
+
+def tokenize(text: str):
     return [t.lower() for t in text.split()]
+
 
 class HybridRetriever:
     def __init__(self, indices_dir: str, alpha: float = 0.5):
         p = pathlib.Path(indices_dir)
-        with open(p/"bm25.pkl","rb") as f:
+        with open(p / "bm25.pkl", "rb") as f:
             obj = pickle.load(f)
         self.bm25: BM25Okapi = obj["bm25"]
         self.tokenized = obj["tokenized"]
         self.doc_ids = obj["doc_ids"]
 
-        self.faiss_index = faiss.read_index(str(p/"faiss.index"))
-        with open(p/"faiss_meta.pkl","rb") as f:
+        self.faiss_index = faiss.read_index(str(p / "faiss.index"))
+        with open(p / "faiss_meta.pkl", "rb") as f:
             meta = pickle.load(f)
         self.embed_model = SentenceTransformer(meta["model"])
         self.alpha = alpha
 
-    def search(self, query: str, k: int = 10, kb: int = 50, kv: int = 50,
-               max_play_time: int | None = None, # include for logging
-               players_at: int | None = None,
-               mechanics_any: list[str] | None = None
-               ):
+    def search(
+        self,
+        query: str,
+        k: int = 10,
+        kb: int = 50,
+        kv: int = 50,
+        max_play_time: int | None = None,  # include for logging
+        players_at: int | None = None,
+        mechanics_any: list[str] | None = None,
+    ):
         # BM25
         bm_scores = self.bm25.get_scores(tokenize(query))
         top_bm_idx = np.argsort(bm_scores)[::-1][:kb]
         # FAISS
-        q = self.embed_model.encode([query]) # embedding the input query
+        q = self.embed_model.encode([query])  # embedding the input query
         faiss.normalize_L2(q)
         sims, idxs = self.faiss_index.search(q.astype(np.float32), kv)
-        top_vec_idx = idxs[0]; vec_scores = sims[0]
+        top_vec_idx = idxs[0]
+        vec_scores = sims[0]
 
         # gather candidates
         cand_idx = np.unique(np.concatenate([top_bm_idx, top_vec_idx]))
@@ -61,30 +73,41 @@ class HybridRetriever:
         def z(x):
             mu, sd = float(np.mean(x)), float(np.std(x) + 1e-9)
             return (x - mu) / sd
+
         fused = self.alpha * z(bm) + (1 - self.alpha) * z(vec)
 
         order = np.argsort(fused)[::-1][:k]
         results = []
         for o in order:
             i = int(cand_idx[o])
-            results.append({"doc_id": self.doc_ids[i], "score": float(fused[o]),
-                            "bm25": float(bm[cand_idx==i][0]), "vec": float(vec[cand_idx==i][0])})
-            
-        log_query("logs", {
-            "query": query,
-            "alpha": self.alpha,
-            "k": k,
-            "filters": {
-                "max_play_time": max_play_time,
-                "players_at": players_at,
-                "mechanics_any": mechanics_any,
+            results.append(
+                {
+                    "doc_id": self.doc_ids[i],
+                    "score": float(fused[o]),
+                    "bm25": float(bm[cand_idx == i][0]),
+                    "vec": float(vec[cand_idx == i][0]),
+                }
+            )
+
+        log_query(
+            "logs",
+            {
+                "query": query,
+                "alpha": self.alpha,
+                "k": k,
+                "filters": {
+                    "max_play_time": max_play_time,
+                    "players_at": players_at,
+                    "mechanics_any": mechanics_any,
+                },
+                "bm25_top": [self.doc_ids[int(i)] for i in top_bm_idx[:3]],
+                "faiss_top": [self.doc_ids[int(i)] for i in top_vec_idx[:3]],
+                "final": results,  # includes doc_id + fused
             },
-            "bm25_top": [self.doc_ids[int(i)] for i in top_bm_idx[:3]],
-            "faiss_top": [self.doc_ids[int(i)] for i in top_vec_idx[:3]],
-            "final": results,   # includes doc_id + fused
-        })
+        )
 
         return results
+
 
 def main():
     ap = argparse.ArgumentParser()
@@ -98,8 +121,8 @@ def main():
     for h in hits:
         print(h)
 
-if __name__ == "__main__":
 
+if __name__ == "__main__":
     """
     only include the below when debugging
     this allows you to not need to add args when debugging and/or runnning in cli
@@ -110,9 +133,8 @@ if __name__ == "__main__":
 
     # if not sys.argv[1:]: # 👇 inject defaults only if user didn’t pass any args
     #     sys.argv += ["--indices","indices","--q","deck building","--alpha","0.5"]
-    
-    #####################################
 
+    #####################################
 
     main()
 
