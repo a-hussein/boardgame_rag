@@ -37,5 +37,5 @@ demo:
 
 # 5) API
 api:
-	$(PYTHON) uvicorn boardgame_rag.api:app --reload
+	$(PYTHON) uvicorn boardgame_rag.api:app --reload --port 8000
 
