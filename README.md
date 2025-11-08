@@ -10,10 +10,14 @@
 - api: FastAPI endpoints for /search 
 
 # Run:
-- make data    # generate synthetic dataset
-- make index   # build BM25 + FAISS
-- make eval    # run metrics
-- make api     # start FastAPI
+- make data 
+    - generate synthetic dataset
+- make index
+    - build BM25 + FAISS
+- make eval
+    - run metrics
+- make api
+    - start FastAPI
 
 # Throughout explortation, notes of an (optional) backlog, referencing here: 
 - implement the testing suite
