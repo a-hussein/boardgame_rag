@@ -8,7 +8,6 @@ fuses bm25 and daiss scores to make a ranked list
 retrieval quality depends on corpus diversity & α weighting
 """
 
-
 from __future__ import annotations
 
 import argparse

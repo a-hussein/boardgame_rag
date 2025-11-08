@@ -2,7 +2,6 @@
 builds bm25 and faiss vector indices
 """
 
-
 from __future__ import annotations
 
 import argparse
